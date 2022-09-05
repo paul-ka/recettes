@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="user-scalable=1.0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+    <title>pell</title>
+    <link rel="stylesheet" type="text/css" href="./pell.css">
+	<link rel="stylesheet" href="./style.css" />
+	<script src="./pell.js"></script>
+	<script>
+		var url = decodeURI(document.URL.split('?')[1]);
+		var fiche;
+		var fs = nw.require('fs');
+		function init(){
+			console.log(url);
+			fs.readFile("./recettes/"+url, 'utf8', function(err, txt) {
+			if (err) {
+				console.error(err);
+				return;
+			}
+			var part = txt.split(/<\/?body>/);
+			console.dir(part);
+			fiche = part.slice(); //copie le tableau dans la variable globale fiche
+			document.querySelector("body").innerHTML += `
+					<div id="editor" class="pell"></div>
+					<button onclick="valide()">Valider</button>
+					`
+			var i = window.pell.init({
+				element: document.getElementById('editor'),
+				defaultParagraphSeparator: 'p',
+			})
+			i.content.innerHTML = part[1].replaceAll('/r/n','<br>');
+			});
+		}
+		function valide(){
+			var resul = fiche[0]+editor.content.innerHTML+fiche[2];
+			// console.log(resul);
+			var fs = require('fs');
+            fs.writeFile(`./recettes/${url}`, resul, function (err) {
+                if (err) throw err;
+                console.log(`${nomFic} créé`);
+            })
+
+		}
+	</script>
+</head>
+<body onload="init();">
+	<a href="../index.html">&#x25c0</a>
+</body>
+<!-- <script>
+	var editor = window.pell.init({
+	  element: document.getElementById('editor'),
+	  defaultParagraphSeparator: 'p',
+	  onChange: function (html) {
+		document.getElementById('text-output').innerHTML = html
+		document.getElementById('html-output').textContent = html
+	  }
+	})
+	editor.content.innerHTML = '<b><u><i>Initial content!</i></u></b>'
+  </script> -->
+
+</html>

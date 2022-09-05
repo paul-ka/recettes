@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saisie de recette</title>
+</head>
+<body>
+    <a href="./index.html">&#x2B9C&#x2B9C</a>
+    <form id="form">
+        <h2>Catégorie</h2>
+        <select name="[cat]" id="cat">
+            <option value=""></option>
+            <option value="aperitif">apéritif</option>
+            <option value="entree">entrée</option>
+            <option value="soupe">soupe</option>
+            <option value="plat">plat</option>
+            <option value="sauce">sauce</option>
+            <option value="dessert">dessert</option>
+            <option value="autre">autre</option>
+        </select>
+        Fait : 
+        <input type="radio" id="Faitn" name="[fait]" value="n" checked><label>Non</label>        
+        <input type="radio" id="Faito" name="[fait]" value="o" ><label>Oui</label>        
+        <h2>Titre</h2>
+        <input type="text" name="[Titre]" id="Titre" size="124">
+        <h2>Photo</h2>
+        <input type="text" name="[Photo]" id="Photo" size="124">
+        <h2>Personnes</h2>
+        <input type="text" name="[Personnes]" id="Personnes" size="124">
+        <h2>Temps préparation</h2>
+        <input type="text" name="[tpsprepa]" id="tpsprepa" size="124">
+        <h2>Temps cuisson</h2>
+        <input type="text" name="[tpscuis]" id="tpscuis" size="124">
+        <h2>Ingrédients</h2>
+        <textarea id="ingr" name="[ingr]" rows="15" cols="120"></textarea>
+        <h2>Préparation</h2>
+        <textarea id="prepa" name="[prepa]" rows="15" cols="120"></textarea>
+        <h2>Remarque</h2>
+        <textarea id="Rq" name="[Rq]" rows="15" cols="120"></textarea><br>
+        <input type="submit"><br>
+    </form>
+    <input type="text" name="resul-json" id="resul-json" size="124">
+    <script src="./data.js"></script>
+    <script>
+        
+        var base =`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="../style.css" type="text/css"/>
+            <title>[Titre]</title>
+        </head>
+        <body>
+            <a href="../index.html">&#x25C0</a>
+            <h1 id="rec">[Titre]</h1>
+            <div id="qte">
+                Pour [Personnes] Personnes,<br>
+                Temps de préparation : [tpsprepa],<br>
+                Temps de cuisson : [tpscuis],<br>
+            </div>
+            [Photo]
+            <br>testé : [fait]
+            <h2>Ingrédients</h2>
+            <ul id="ingr">
+                <li>[ingr]</li>
+            </ul>
+            <h2>Préparation</h2>
+            <ul id="prep">
+                <li>[prepa]</li>
+            </ul>
+            <h2>Remarques</h2>
+            <div id="rq">
+                [Rq]
+            </div>
+        </body>
+        </html>
+        `;
+        var tramejson ="";
+        var form = document.querySelector("form");
+        var nomFic = "";
+        var mydata = JSON.parse(data);
+        var Titre = document.getElementById("Titre");
+        var Photo = document.getElementById("Photo");
+ 
+        Titre.addEventListener('change', updateValue);
+
+        function updateValue(e) {
+            Photo.value = e.target.value.replaceAll(" ","_").replaceAll(":","").replaceAll("\\","").replaceAll("?","").replaceAll("'","").replaceAll('"',"") + ".jpg";
+        }
+        var fs = require('fs');
+
+        const recipe = {
+            cat:"",
+            fait:"n",
+            recette:"",
+            url:"",
+            ingredients:""
+        };
+
+        const currentrecipe = Object.create(recipe);
+        form.onsubmit = function(event){
+            trame = base;
+            event.preventDefault();
+            var formdata = new FormData(form);
+            for(var pair of formdata.entries()){
+                console.log(pair[0] + '=' + pair[1]);
+                if(pair[0] == "[cat]"){                     //test le champs [cat]
+                    tramejson = `{"cat":"${pair[1]}",`;     //Forme le JSON pour le copier dans data.js
+                    currentrecipe.cat = pair[1];            //met à jour le champs cat de currentrecipe
+                }
+                if(pair[0] == "[fait]"){
+                    tramejson += `"fait":"${pair[1]}",`;
+                    currentrecipe.fait = pair[1];
+                }
+                if(pair[0] == "[Titre]"){
+                    nomFic = pair[1].replaceAll(" ","_").replaceAll(":","").replaceAll("\\","").replaceAll("?","").replaceAll("'","").replaceAll('"',"")
+                    tramejson += `"recette":"${pair[1]}","url":"${nomFic}","ingredients":"`;
+                    currentrecipe.recette = pair[1];
+                    currentrecipe.url = nomFic;
+                }
+                if((pair[0] == "[Photo]")&&(pair[1] != "")){
+                    pair[1] = `<img src="../img/${pair[1]}">`;
+                }
+                if(pair[0] == "[ingr]"){
+                    tramejson += pair[1].replaceAll(",","").replaceAll("\r\n",", ")+`"}`;
+                }
+                //if((pair[0] == "[ingr]")||(pair[0] == "[prepa]")){
+                if(pair[0] == "[ingr]"){
+                    pair[1] = pair[1].replaceAll("\r\n","</li>\n<li>");
+                    currentrecipe.ingredients = pair[1].replaceAll("</li>\n<li>",", ");
+                }
+                if(pair[0] == "[prepa]"){
+                    pair[1] = pair[1].replaceAll("\r\n","</li>\n<li>");
+                }
+                trame = trame.replaceAll(pair[0],pair[1]);
+
+            }
+            mydata.push(currentrecipe);
+            console.dir(mydata);
+            document.querySelector("#resul-json").value = tramejson + ",";
+            // document.querySelector("#resul").value = trame;
+            fs.appendFile(`./recettes/${nomFic}.html`, trame, function (err) {
+                if (err) throw err;
+                console.log(`${nomFic} créé`);
+            })
+            fs.writeFile(`./data.js`, "var data = `" + JSON.stringify(mydata).replaceAll("},","},\r\n") + "`;", function (err) {
+                if (err) throw err;
+                console.log(`data.js créé`);
+            })
+
+        }
+        
+    </script>
+</body>
+</html>

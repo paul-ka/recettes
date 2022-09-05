@@ -1,0 +1,17 @@
+h1{
+    padding: 10px;
+    background-color: darksalmon;
+    border-radius: 15px;
+    text-align: center;
+}
+h2{
+    padding: 10px;
+    background-color: rgb(245, 201, 187);
+    border-radius: 3px 15px;
+}
+ul {
+    list-style-type: "\1F944";
+}
+input {
+    width:120px;
+}
