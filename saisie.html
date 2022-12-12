@@ -45,41 +45,40 @@
     <script src="./data.js"></script>
     <script>
         
-        var base =`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="../style.css" type="text/css"/>
-            <title>[Titre]</title>
-        </head>
-        <body>
-            <a href="../index.html">&#x25C0</a>
-            <h1 id="rec">[Titre]</h1>
-            <div id="qte">
-                Pour [Personnes] Personnes,<br>
-                Temps de préparation : [tpsprepa],<br>
-                Temps de cuisson : [tpscuis],<br>
-            </div>
-            [Photo]
-            <br>testé : [fait]
-            <h2>Ingrédients</h2>
-            <ul id="ingr">
-                <li>[ingr]</li>
-            </ul>
-            <h2>Préparation</h2>
-            <ul id="prep">
-                <li>[prepa]</li>
-            </ul>
-            <h2>Remarques</h2>
-            <div id="rq">
-                [Rq]
-            </div>
-        </body>
-        </html>
-        `;
+        var base =`<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../style.css" type="text/css"/>
+	<title>[Titre]</title>
+</head>
+<body>
+	<a href="../index.html">&#x25C0</a>
+	<h1 id="rec">[Titre]</h1>
+	<div id="qte">
+		Pour [Personnes] Personnes,<br>
+		Temps de préparation : [tpsprepa],<br>
+		Temps de cuisson : [tpscuis],<br>
+	</div>
+	[Photo]
+	<br>testé : [fait]
+	<h2>Ingrédients</h2>
+	<ul id="ingr">
+		<li>[ingr]</li>
+	</ul>
+	<h2>Préparation</h2>
+	<ul id="prep">
+		<li>[prepa]</li>
+	</ul>
+	<h2>Remarques</h2>
+	<div id="rq">
+		[Rq]
+	</div>
+</body>
+</html>
+`;
         var tramejson ="";
         var form = document.querySelector("form");
         var nomFic = "";
